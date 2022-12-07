@@ -264,7 +264,7 @@
 
                                 // fade points for unselected nodes
                                 d3.selectAll('.map-marker')
-                                    .attr('stroke-opacity', 0.15)
+                                    .attr('stroke-opacity', 0.25)
                 
                                 d3.selectAll("." + d.cont + "-" + dot_class_year)
                                     .attr('stroke', '#e93223')
@@ -275,7 +275,7 @@
                                 for(let i = 0; i < selected_nodes.length; i++){
                                     d3.selectAll(selected_nodes[i])
                                         .attr('stroke', '#9cf99d')
-                                        // .attr('stroke-opacity', 1)
+                                        .attr('stroke-opacity', 1)
                                 }
 
                                 // if no nodes are selected, all points will return back to red and greater opacity
