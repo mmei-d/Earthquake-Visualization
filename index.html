@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+
+        <!-- Load d3.js and d3.js geo projection library plugin -->
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+        <!-- Load Leaflet library for interactive maps -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+
+        <!-- Load font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com"> 
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;700&display=swap" rel="stylesheet">
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                font-family: 'Lato', sans-serif;
+                font-weight: 300;
+            }
+
+            b, h3 {
+                font-weight: 700;
+            }
+
+            header {
+                text-align: center;
+                padding: 20px;
+            }
+            
+            section {
+                padding: 0px 25px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                height: 600px;
+            }
+
+            #line_graph {
+                width: 40%;
+                height: 100%;
+                background-color: #dddddd;
+            }
+
+            .tooltip {
+                position: relative;
+            }
+
+            #legend {
+                position: absolute;
+                left: 100px;
+            }
+
+            #mapid {
+                height: 100%;
+                width: 58%;
+            }
+
+            .leaflet-tooltip {
+                padding: 15px;
+            }
+
+            .leaflet-tooltip p, .leaflet-tooltip h3 {
+                margin: 1px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Major Earthquakes Across the Globe (1900 - 2009)</h1>
+        </header>
+        <section>
+            <div id="line_graph">
+                <div id="legend"></div>
+            </div>
+            <div id="mapid"></div>
+        </section>
+
+        <script>
+
+            /**************************************************************************
+            *                                                                         *
+            *                     BEGINNING OF LINE GRAPH CODE                        *
+            *                                                                         * 
+            **************************************************************************/
+
+            // set the dimensions and margins of the graph
+            let div = document.querySelector('#line_graph')
+            let divWidth = div.offsetWidth
+            let divHeight = div.offsetHeight
+            var margin = {top: 50, right: 50, bottom: 60, left: 75}
+            width = divWidth - margin.left - margin.right
+            height = divHeight - margin.top - margin.bottom
+
+            // append the svg object to the body of the page
+            var svg = d3.select("#line_graph")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+            var legendlabel = [
+                {name: "Asia", color:"#4daf4a"}, 
+                {name: "Oceania", color:"#ffe25e"}, 
+                {name: "South America", color:"#db7fd4"}, 
+                {name: "North America", color:"#ff7f00"}, 
+                {name: "Africa", color:"#d14038"}, 
+                {name: "Europe", color:"#8e63c9"}, 
+                {name: "Antartica", color:"#25b4db"}
+            ]
+
+            //Read the data
+            d3.csv("cont.csv", 
+                // When reading the csv, I must format variables:
+                function(d){
+                    return { year : d3.timeParse("%Y")(d.year), freq : d.freq, cont : d.cont, loc1 : d.loc1, loc2 : d.loc2, loc3: d.loc3 }
+                },
+
+                function(data) {
+                    // initialize legend
+                    var legendItemSize = 10;
+                    var legendSpacing = 4;
+                    var xOffset = 25;
+                    var yOffset = 50;
+                    var legend = d3
+                        .select('#legend')
+                        .append('svg')
+                        .selectAll('.legendItem')
+                        .data(legendlabel);
+
+                    // legend items
+                    legend
+                        .enter()
+                        .append('rect')
+                        .attr('class', 'legendItem')
+                        .attr('width', legendItemSize)
+                        .attr('height', legendItemSize)
+                        .style('fill', d => d.color)
+                        .attr('transform',
+                        (d, i) => {
+                            var x = xOffset
+                            var y = yOffset + (legendItemSize + legendSpacing) * i
+                            return `translate(${x}, ${y})`
+                        });
+
+                    // legend labels
+                    legend
+                        .enter()
+                        .append('text')
+                        .attr('x', xOffset + legendItemSize + 5)
+                        .attr('y', (d, i) => yOffset + (legendItemSize + legendSpacing) * i + 12)
+                        .text(d => d.name); 
+
+
+
+                    // group the data: I want to draw one line per group
+                    var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
+                        .key(function(d) { return d.cont })
+                        .entries(data)
+
+                    // add x axis --> it is a date format
+                    var x = d3.scaleTime()
+                        .domain(d3.extent(data, function(d) { return d.year }))
+                        .range([ 0, width ])
+                    svg.append("g")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x).ticks(5))
+
+                    // x axis label
+                    svg.append("text")
+                        .attr("class", "x label")
+                        .attr("text-anchor", "end")
+                        .attr("x", width - 190)
+                        .attr("y", height + 40)
+                        .style("font-weight", 700)
+                        .text("Decade")
+
+                    // add y axis
+                    var y = d3.scaleLinear()
+                        .domain([0, d3.max(data, function(d) { return +d.freq })])
+                        .range([ height, 0 ])
+                    svg.append("g")
+                        .call(d3.axisLeft(y))
+
+                    // y axis label
+                    svg.append("text")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", 15 - margin.left)
+                        .attr("x", 0 - (height / 2))
+                        .attr("dy", "1em")
+                        .style("text-anchor", "middle")
+                        .style("font-weight", 700)
+                        .text("Frequency")
+
+                    // color palette
+                    var res = sumstat.map(function(d){ return d.key }) // list of group names
+                    var color = d3.scaleOrdinal()
+                        .domain(res)
+                        .range(['#d14038','#25b4db','#4daf4a','#8e63c9','#ff7f00','#ffe25e','#db7fd4'])
+
+                    // draw line
+                    svg.selectAll(".line")
+                        .data(sumstat)
+                        .enter()
+                        .append("path")
+                        .attr("fill", "none")
+                        .attr("stroke", function(d){ return color(d.key) })
+                        .attr("stroke-width", 1.75)
+                        .attr("d", function(d){
+                            return d3.line()
+                            .x(function(d) { return x(d.year); })
+                            .y(function(d) { return y(+d.freq); })
+                            (d.values)
+                        })
+
+                    // tooltip
+                    var Tooltip = d3.select("#line_graph")
+                        .append("div")
+                        .style("opacity", "0")
+                        .attr("class", "tooltip")
+                        .style("background-color", "white")
+                        .style("padding", "20px")
+                        .style("font-size", "13px")
+                        .style("box-shadow", "0 1px 3px rgba(0,0,0,0.4)")
+                        .style("z-index", "100000")
+
+                    // add line nodes
+                    selected_nodes = [] // stores nodes clicked on/selected for keeping track of points on map
+
+                    svg
+                        .append("g")
+                        .selectAll("dot")
+                        .data(data)
+                        .enter()
+                        .append("circle")
+                            .attr("class", "myCircle")
+                            .attr("cx", function(d) { return x(d.year) } )
+                            .attr("cy", function(d) { return y(d.freq) } )
+                            .attr("r", 6)
+                            .attr("stroke", function(d) { return color(d.cont)})
+                            .attr("stroke-width", 2)
+                            .attr("fill", "#ffffff")
+                            .attr("class", function (d) { return d.cont } )
+                            .attr("id", function (d) { return "0" + d.row_num }) // "0" = clicked, "1" = unclicked
+                        .on("click", function(d){
+                            let dot_year = d.year + ""
+                            let dot_class_year = dot_year.substring(11,15)
+
+                            // unselecting line node
+                            if(this.id.charAt(0) == '1'){
+                                // make line node white
+                                d3.select(this)
+                                    .transition()
+                                    .duration(150)
+                                    .style("fill", "white")
+
+                                // fade points for unselected nodes
+                                d3.selectAll('.map-marker')
+                                    .attr('stroke-opacity', 0.15)
+                
+                                d3.selectAll("." + d.cont + "-" + dot_class_year)
+                                    .attr('stroke', '#e93223')
+
+                                // deselect points on map
+                                const remove_node_index = selected_nodes.indexOf("." + d.cont + "-" + dot_class_year)
+                                selected_nodes.splice(remove_node_index, 1)
+                                for(let i = 0; i < selected_nodes.length; i++){
+                                    d3.selectAll(selected_nodes[i])
+                                        .attr('stroke', '#9cf99d')
+                                        // .attr('stroke-opacity', 1)
+                                }
+
+                                // if no nodes are selected, all points will return back to red and greater opacity
+                                if(selected_nodes.length == 0){
+                                    d3.selectAll('.map-marker')
+                                        .attr('stroke-opacity', 0.6)
+                                }
+
+                                this.id = "0" + d.i
+                            // clicking and selecting line node
+                            }else{
+                                // fill in line node w line color
+                                d3.select(this)
+                                    .transition()
+                                    .duration(150)
+                                    .style("fill", color(d.cont))
+                                    .attr("r", 6)
+
+                                // fade points for unselected nodes
+                                d3.selectAll('.map-marker')
+                                    .attr('stroke-opacity', 0.25)
+
+                                // show points of all selected nodes on map
+                                selected_nodes.push("." + d.cont + "-" + dot_class_year)
+                                for(let i = 0; i < selected_nodes.length; i++){
+                                    d3.selectAll(selected_nodes[i])
+                                        .attr('stroke', '#9cf99d')
+                                        .attr('stroke-opacity', 1)
+                                }
+
+                                this.id = "1" + d.i
+                            }
+                        })
+                        // hover effects for nodes
+                        .on("mouseenter", function(d){
+                            let tooltip_continent = d.cont
+                            if(tooltip_continent == "SouthAmerica"){
+                                tooltip_continent = "South America"
+                            }else if(tooltip_continent == "NorthAmerica"){
+                                tooltip_continent = "North America"
+                            }
+
+                            let line_tool_year = d.year + ""
+                            let line_year = line_tool_year.substring(11,15)
+
+                            Tooltip
+                                .style("opacity", "1")
+                                .html(
+                                    "<p><b>Continent</b>: " + tooltip_continent + " (" + line_year + "s)" + "</p>" +
+                                    "<p><b>Frequency</b>: " + d.freq + " </p>" +
+                                    "<br><p><b>Locations with Highest Frequency of Earthquakes</b>: </p>" + 
+                                    "<p>1. " + d.loc1 + "</p>" +
+                                    "<p>2. " + d.loc2 + "</p>" +
+                                    "<p>3. " + d.loc3 + "</p>")
+                                .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                                .style("top", (d3.mouse(this)[1]-600) + "px")
+
+                            // make all nodes on line bigger
+                            d3.selectAll("." + d.cont)
+                                .transition()
+                                .duration(150)
+                                .attr("r", 8)
+
+                            // make hovered node bigger and the line color to indicate can select node
+                            d3.select(this)
+                                .transition()
+                                .duration(150)
+                                .style("fill", color(d.cont))
+                                .attr("r", 8)
+                        })
+                        .on("mouseout", function(d){
+                            Tooltip
+                                .style("opacity", 0)
+
+                            // go back to original size for all nodes on line
+                            d3.selectAll("." + d.cont)
+                                .transition()
+                                .duration(150)
+                                .attr("r", 6)
+
+                            // if not clicked, node looks normal/same as before when mouse not hovered anymore
+                            if(this.id.charAt(0) == '0'){
+                                d3.select(this)
+                                    .transition()
+                                    .duration(150)
+                                    .style("fill", "#ffffff")
+                                    .attr("r", 6)
+                            }
+                        })
+                }
+            )
+
+
+
+
+            /**************************************************************************
+            *                                                                         *
+            *                       BEGINNING OF MAP CODE                             *
+            *                                                                         * 
+            **************************************************************************/
+
+            // mapid is the id of the div where the map will appear
+            var map = L
+                .map('mapid')
+                .setView([0, 2], 1.5)   // center position + zoom
+
+            // Add a tile to the map = a background. Comes from OpenStreetmap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 10,
+            }).addTo(map)
+
+            // Add a svg layer to the map
+            L.svg().addTo(map)
+
+            d3.queue()
+                .defer(d3.csv, "final_data.csv") // Position of circles
+                .await(ready)
+
+            function ready(error, data) {
+                // function for assigning classes to each marker based on continent and year
+                const assign_class = d => {
+                    const assign_year = d => {
+                        if(d.decade == 1900){
+                            return "-1900"
+                        }else if(d.decade == 1910){
+                            return "-1910"
+                        }else if(d.decade == 1920){
+                            return "-1920"
+                        }else if(d.decade == 1930){
+                            return "-1930"
+                        }else if(d.decade == 1940){
+                            return "-1940"
+                        }else if(d.decade == 1950){
+                            return "-1950"
+                        }else if(d.decade == 1960){
+                            return "-1960"
+                        }else if(d.decade == 1970){
+                            return "-1970"
+                        }else if(d.decade == 1980){
+                            return "-1980"
+                        }else if(d.decade == 1990){
+                            return "-1990"
+                        }else{
+                            return "-2000"
+                        }
+                    }
+
+                    if(d.Continents == "Asia"){
+                        return "map-marker Asia" + assign_year(d)
+                    }else if(d.Continents == "Europe"){
+                        return "map-marker Europe" + assign_year(d)
+                    }else if(d.Continents == "NorthAmerica"){
+                        return "map-marker NorthAmerica" + assign_year(d)
+                    }else if(d.Continents == "SouthAmerica"){
+                        return "map-marker SouthAmerica" + assign_year(d)
+                    }else if(d.Continents == "Oceania"){
+                        return "map-marker Oceania" + assign_year(d)
+                    }else if(d.Continents == "Antartica"){
+                        return "map-marker Antartica" + assign_year(d)
+                    }else{
+                        return "map-marker Africa" + assign_year(d)
+                    }
+                }
+
+                // for every row in the csv, create a circle marker (w/ a class associated w/ continent and decade) and bind a tooltip popup
+                for (var i in data) {
+                    const row = data[i]
+
+                    // calculate readable date and time for tooltip
+                    const rawDate = row.time + ""
+                    const utcDate = rawDate.substring(0, 19) + "Z"
+                    const date = new Date(utcDate)
+                    const localDate = date.toLocaleString()
+                    let tooltip_continent = row.Continents
+                    if (tooltip_continent == "SouthAmerica"){
+                        tooltip_continent = "South America"
+                    }else if(tooltip_continent == "NorthAmerica"){
+                        tooltip_continent = "North America"
+                    }
+
+                    const marker = L.circle([row.latitude, row.longitude], {
+                        color: "#e93223",
+                        weight: 6,
+                        opacity: 0.6,
+                        fill: false,
+                        offset: [50, 0],
+                        className: assign_class(row)
+                    }) 
+                        .bindTooltip(
+                            "<h3 style='text-align: center;'>Earthquake Details</h3>" + 
+                            "<p><b>Location</b>: " + row.place.charAt(0).toUpperCase() + row.place.slice(1) + "</p>" + 
+                            "<p><b>Continent</b>: " + tooltip_continent + "</p>" + 
+                            "<p><b>Date</b>: " + localDate + "</p>" + 
+                            "<p><b>Magnitude</b>: " + row.mag + "</p>" +
+                            "<p><b>Depth</b>: " + row.depth + " km</p>")
+                        // change color of marker on hover
+                        .on("mouseover", function(){
+                            // if the point has been highlighted bc a node was selected
+                            if(this._path.attributes.stroke.nodeValue == "#9cf99d"){
+                                this.setStyle({
+                                    color: "#1aba1a",
+                                    opacity: 1
+                                })
+                            // for normal red point
+                            }else{
+                                this.setStyle({
+                                    color: "#9cf99c",
+                                    opacity: 1
+                                })
+                            }
+                        })
+                        .on("mouseout", function(){
+                            // for highlighted point
+                            if(this._path.attributes.stroke.nodeValue == "#1aba1a"){
+                                this.setStyle({
+                                    color: "#9cf99d",
+                                    opacity: 1
+                                })
+                            // for normal point
+                            }else{
+                                // if not faded
+                                if(selected_nodes.length == 0){
+                                    this.setStyle({
+                                        color: "#e93223",
+                                        opacity: 0.6
+                                    })
+                                // if faded
+                                }else{
+                                    this.setStyle({
+                                        color: "#e93223",
+                                        opacity: 0.25
+                                    })
+                                }
+                            }
+                        })
+                        .addTo(map)
+                }
+            }
+        </script>
+    </body>
+</html>

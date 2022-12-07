@@ -1,0 +1,78 @@
+row_num,year,freq,cont,loc1,loc2,loc3
+1,1900,5,Africa,Southwest Indian Ridge,Ethiopia,Owen Fracture Zone region
+2,1910,6,Africa,Tanzania,South Indian Ocean,Mozambique Channel
+3,1920,16,Africa,South Sandwich Islands region,South Indian Ocean,Southern Mid-Atlantic Ridge
+4,1930,11,Africa,South Sandwich Islands region,Near the coast of Libya,Southwest Indian Ridge
+5,1940,9,Africa,South Sandwich Islands region,South Indian Ocean,North of Ascension Island
+6,1950,7,Africa,South Sandwich Islands region,Gulf of Aden,Owen Fracture Zone region
+7,1960,30,Africa,South Sandwich Islands region,South of Africa,Ethiopia
+8,1970,31,Africa,South Sandwich Islands region,Central Mid-Atlantic Ridge,Bouvet Island region
+9,1980,50,Africa,South Sandwich Islands region,Ethiopia,Central Mid-Atlantic Ridge
+10,1990,52,Africa,South Sandwich Islands region,North of Ascension Island,Central Mid-Atlantic Ridge
+11,2000,64,Africa,South Sandwich Islands region,Central Mid-Atlantic Ridge,Prince Edward Islands region
+12,1900,2,Antartica,Scotia Sea,Southwestern Atlantic Ocean,N/A
+13,1910,1,Antartica,Antarctica,N/A,N/A
+14,1920,1,Antartica,South Sandwich Islands region,N/A,N/A
+15,1930,3,Antartica,Scotia Sea,South Sandwich Islands region,Drake Passage
+16,1940,6,Antartica,South Sandwich Islands region,East of the South Sandwich Islands,Scotia Sea
+17,1950,1,Antartica,Scotia Sea,N/A,N/A
+18,1960,5,Antartica,East of the South Sandwich Islands,Balleny Islands region,South Sandwich Islands region
+19,1970,11,Antartica,West of Macquarie Island,Scotia Sea,South Sandwich Islands region
+20,1980,12,Antartica,South Sandwich Islands region,South Shetland Islands,Scotia Sea
+21,1990,14,Antartica,Balleny Islands region,West of Macquarie Island,South Sandwich Islands region
+22,2000,18,Antartica,South Sandwich Islands region,West of Macquarie Island,East of the South Sandwich Islands
+23,1900,149,Asia,"Hindu Kush region, Afghanistan","East coast of Honshu, Japan",Taiwan
+24,1910,161,Asia,"East coast of Honshu, Japan",Kuril Islands,Taiwan
+25,1920,172,Asia,Kuril Islands,"South coast of Honshu, Japan","Mindanao, Philippines"
+26,1930,172,Asia,"East coast of Honshu, Japan",Kuril Islands,Molucca Sea
+27,1940,190,Asia,Kuril Islands,"South coast of western Honshu, Japan","Hokkaido, Japan region"
+28,1950,171,Asia,Kuril Islands,"East coast of the Kamchatka Peninsula, Russia",Taiwan
+29,1960,238,Asia,Kuril Islands,"Rat Islands, Aleutian Islands, Alaska",Banda Sea
+30,1970,386,Asia,Kuril Islands,"Mindanao, Philippines",Taiwan region
+31,1980,381,Asia,Eastern Kazakhstan,"Mindanao, Philippines",Molucca Sea
+32,1990,466,Asia,Kuril Islands,"Off the east coast of Honshu, Japan","Hindu Kush region, Afghanistan"
+33,2000,592,Asia,Kuril Islands,Banda Sea,"Southern Sumatra, Indonesia"
+34,1900,10,Europe,Central Turkey,"Sicily, Italy",Romania
+35,1910,11,Europe,Central Turkey,Svalbard region,Central Italy
+36,1920,9,Europe,Bulgaria,Southern Greece,Eastern Mediterranean Sea
+37,1930,11,Europe,Southern Greece,Eastern Turkey,Azores Islands region
+38,1940,10,Europe,Central Turkey,Azores-Cape St. Vincent Ridge,Eastern Turkey
+39,1950,21,Europe,Greece,Western Turkey,Jan Mayen Island region
+40,1960,17,Europe,Western Turkey,Azores-Cape St. Vincent Ridge,Iceland region
+41,1970,21,Europe,Western Turkey,"Crete, Greece",Jan Mayen Island region
+42,1980,24,Europe,Aegean Sea,Greece,Northern Algeria
+43,1990,23,Europe,Greece,Western Turkey,Georgia (Sak'art'velo)
+44,2000,31,Europe,Southern Greece	,Iceland,Svalbard region	
+45,1900,37,NorthAmerica,"Guerrero, Mexico","Jalisco, Mexico","Kodiak Island region, Alaska"
+46,1910,48,NorthAmerica,"Aleutian Islands, Alaska",Off the coast of Oregon,"Oaxaca, Mexico"
+47,1920,34,NorthAmerica,"Oaxaca, Mexico",Northern Mid-Atlantic Ridge,"Aleutian Islands, Alaska"
+48,1930,41,NorthAmerica,"Oaxaca, Mexico","Aleutian Islands, Alaska",Near the coast of Nicaragua
+49,1940,51,NorthAmerica,Guatemala,"Aleutian Islands, Alaska","Oaxaca, Mexico"
+50,1950,70,NorthAmerica,"Aleutian Islands, Alaska",Nevada,Offshore Guatemala
+51,1960,91,NorthAmerica,"Kodiak Island region, Alaska","Aleutian Islands, Alaska",Northern Mid-Atlantic Ridge
+52,1970,101,NorthAmerica,"Aleutian Islands, Alaska","Kodiak Island region, Alaska","Vancouver Island, Canada region"
+53,1980,111,NorthAmerica,"Aleutian Islands, Alaska",Central California,"Guerrero, Mexico"
+54,1990,119,NorthAmerica,"Aleutian Islands, Alaska","Guerrero, Mexico",Alaska Peninsula
+55,2000,125,NorthAmerica,"Aleutian Islands, Alaska",Northern Mid-Atlantic Ridge,"Haida Gwaii Region, Canada"
+56,1900,61,Oceania,Bismarck Sea,Tonga,Solomon Islands
+57,1910,68,Oceania,Vanuatu,Fiji region,Tonga
+58,1920,40,Oceania,Vanuatu,Santa Cruz Islands,Solomon Islands
+59,1930,108,Oceania,Solomon Islands,Vanuatu,"New Britain region, Papua New Guinea"
+60,1940,137,Oceania,Vanuatu,Southeast of the Loyalty Islands,"New Britain region, Papua New Guinea"
+61,1950,118,Oceania,Vanuatu,Tonga,Fiji region
+62,1960,180,Oceania,Vanuatu,Fiji region,Santa Cruz Islands
+63,1970,346,Oceania,Vanuatu,Solomon Islands,"New Britain region, Papua New Guinea"
+64,1980,397,Oceania,Vanuatu,"New Britain region, Papua New Guinea",Tonga
+65,1990,353,Oceania,Vanuatu,Fiji region,"New Britain region, Papua New Guinea"
+66,2000,492,Oceania,Vanuatu,Fiji region,"New Britain region, Papua New Guinea"
+67,1900,24,SouthAmerica,"Tarapaca, Chile","Atacama, Chile",Costa Rica
+68,1910,28,SouthAmerica,"Antofagasta, Chile",Colombia,"Santiago Del Estero, Argentina"
+69,1920,43,SouthAmerica,"Antofagasta, Chile",Northern Peru,Southern East Pacific Rise
+70,1930,32,SouthAmerica,Easter Island Region,"Tarapaca, Chile","Jujuy, Argentina"
+71,1940,63,SouthAmerica,Central Peru,"Tarapaca, Chile","Santiago Del Estero, Argentina"
+72,1950,63,SouthAmerica,Near the coast of Ecuador,"Acre, Brazil",Southern Peru
+73,1960,92,SouthAmerica,"Bio-Bio, Chile",Peru-Brazil border region,Near the coast of central Peru
+74,1970,101,SouthAmerica,"Antofagasta, Chile",Pacific-Antarctic Ridge,"San Juan, Argentina"
+75,1980,132,SouthAmerica,Southern East Pacific Rise,"Offshore Valparaiso, Chile",South of Panama
+76,1990,135,SouthAmerica,South of Panama,Southern East Pacific Rise,Costa Rica
+77,2000,169,SouthAmerica,Southern East Pacific Rise,South of Panama,Pacific Antarctic Ridge
